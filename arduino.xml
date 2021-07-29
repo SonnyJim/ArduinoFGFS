@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+
+<generic>
+    <output>
+        <binary_mode>false</binary_mode>
+        <line_separator>newline</line_separator>
+        <var_separator>,</var_separator>
+        <preamble></preamble>
+        <postamble></postamble>
+	<chunk>
+            <name>Battery bus switch</name>
+            <node>/controls/electric/battery-bus-switch</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+	<chunk>
+            <name>Avionics switch</name>
+            <node>/controls/electric/avionics-switch</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+        <chunk>
+            <name>Altitude</name>
+            <node>/position/altitude-ft</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+        <chunk>
+            <name>ADF</name>
+            <node>/instrumentation/adf/frequencies/selected-khz</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+        <chunk>
+            <name>ADF standby</name>
+            <node>/instrumentation/adf/frequencies/standby-khz</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+        <chunk>
+            <name>Indicated Airspeed</name>
+            <node>/instrumentation/airspeed-indicator/indicated-speed-kt</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+        <chunk>
+            <name>Autopilot passive mode</name>
+            <node>/autopilot/locks/passive-mode</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+        <chunk>
+            <name>Autopilot target altitude</name>
+            <node>/autopilot/settings/target-altitude-ft</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+        <chunk>
+            <name>Autopilot altitude mode</name>
+            <node>/autopilot/locks/altitude</node>
+            <type>string</type>
+            <format>%s</format>
+        </chunk>
+        <chunk>
+            <name>Autopilot heading mode</name>
+            <node>/autopilot/locks/heading</node>
+            <type>string</type>
+            <format>%s</format>
+        </chunk>
+        <chunk>
+            <name>Fuel quantity left</name>
+            <node>/consumables/fuel/tank/level-lbs</node>
+            <type>double</type>
+            <format>%f</format>
+        </chunk>
+        <chunk>
+            <name>Fuel quantity right</name>
+            <node>/consumables/fuel/tank[1]/level-lbs</node>
+            <type>double</type>
+            <format>%f</format>
+        </chunk>
+	<chunk>
+            <name>RPM</name>
+            <node>/engines/engine/fan</node>
+            <type>int</type>
+            <format>%i</format>
+        </chunk>
+
+    </output>
+</generic>
+
+</PropertyList>
