@@ -36,7 +36,10 @@ enum ap_altitude_mode_t ap_altitude_mode;
 
 enum ap_heading_mode_t {AP_HDG_OFF, AP_HDG_WINGLEVELER, AP_HDG_HOLD, AP_HDG_NAV1, AP_HDG_NAV2, AP_HDG_TRUE};
 enum ap_heading_mode_t ap_heading_mode;
+int ap_hdg_bug;
 float fuel_lbs_left, fuel_lbs_right;
+float compass_hdg;
+
 
 int rpm;
 
@@ -60,8 +63,10 @@ int servo_direction;
 
 void setup() {
   Serial.begin(9600);
+  
   lcd.init();
   lcd.backlight();
+  
   u8x8.begin();
   u8x8.setPowerSave(0);  
   
@@ -189,22 +194,26 @@ void vars_update()
       ap_heading_mode = AP_HDG_TRUE;
     else
       ap_heading_mode = AP_HDG_OFF;
+      
+    buf = Serial.readStringUntil(',');
+    ap_hdg_bug = buf.toInt();
+    
 //FUEL
     buf = Serial.readStringUntil(',');
     fuel_lbs_left = buf.toFloat();
     buf = Serial.readStringUntil(',');
-    fuel_lbs_right = buf.toFloat();     
+    fuel_lbs_right = buf.toFloat();
+
+    buf = Serial.readStringUntil(',');
+    compass_hdg = buf.toFloat();
 //ENGINES            
     buf = Serial.readStringUntil('\n');
     rpm = buf.toInt();
     }
 
 }
-void oled_update()
+void u8x8_draw_fuel()
 {
-  fuel_lbs_left = 2500;
-  fuel_lbs_right = 2500;
-  
   u8x8.clearBuffer();
   u8x8.setFontDirection(1);
 
@@ -240,6 +249,98 @@ void oled_update()
     
   u8x8.sendBuffer();
 }
+
+void u8x8_draw_compass()
+{
+    int j,y;
+    u8x8.clearBuffer();
+    u8x8.setFont(u8g2_font_ncenB18_tr);
+    if (compass_hdg >= 64)
+      j = compass_hdg - 64;
+    else
+      j = 360 + (compass_hdg - 64);
+
+    y = 20;
+    for (int i=0; i < 128; i++)
+    {
+      switch (j)
+      {
+        case 0:
+          u8x8.setFont(u8g2_font_ncenB18_tr);
+          u8x8.drawStr(i - 8,y + 10,"N");
+          break;
+        case 30:
+          u8x8.setFont(u8g2_font_ncenB12_tr);
+          u8x8.drawStr(i - 5,y +5,"3");
+          break;
+        case 60:
+          u8x8.setFont(u8g2_font_ncenB12_tr);
+          u8x8.drawStr(i - 5,y +5,"6");
+          break;     
+        case 90:
+          u8x8.setFont(u8g2_font_ncenB18_tr);
+          u8x8.drawStr(i  - 8,y + 10,"E");
+          break;
+        case 120:
+          u8x8.setFont(u8g2_font_ncenB12_tr);
+          u8x8.drawStr(i - 11,y +5,"12");
+          break;
+        case 150:
+          u8x8.setFont(u8g2_font_ncenB12_tr);
+          u8x8.drawStr(i - 11,y +5,"15");
+          break;
+        case 180:
+          u8x8.setFont(u8g2_font_ncenB18_tr);
+          u8x8.drawStr(i - 8,y + 10,"S");
+          break;
+        case 210:
+          u8x8.setFont(u8g2_font_ncenB12_tr);
+          u8x8.drawStr(i - 11,y +5,"21");
+          break;
+        case 240:
+          u8x8.setFont(u8g2_font_ncenB12_tr);
+          u8x8.drawStr(i - 11,y +5,"24");
+          break;        
+        case 270:
+          u8x8.setFont(u8g2_font_ncenB18_tr);
+          u8x8.drawStr(i - 8,y + 10,"W");
+          break;
+        case 300:
+          u8x8.setFont(u8g2_font_ncenB12_tr);
+          u8x8.drawStr(i - 11,y +5,"30");
+          break;
+        case 330:
+          u8x8.setFont(u8g2_font_ncenB12_tr);
+          u8x8.drawStr(i - 11,y +5,"33");
+          break;
+        default:
+          break;
+      }
+      //Draw heading bug
+       if (j == ap_hdg_bug)
+       {
+        u8x8.drawBox(i-4,29,8,2);
+        u8x8.drawLine (i-2, 28, i+2, 28);
+       }
+         //
+          
+      //Draw ticks
+      if (j % 30 == 0)
+        u8x8.drawLine (i, 0, i, 6);
+      else if (j % 5 == 0)
+        u8x8.drawLine (i, 0, i, 3);
+      if (j++ > 359)
+        j = 0;
+    }
+
+    //Draw static indicator
+    u8x8.setDrawColor(2);
+    u8x8.drawTriangle(56,0,72,0,64,10);
+    u8x8.setDrawColor(1);
+    
+    u8x8.sendBuffer();
+}
+
 void lcd_update()
 {
   //Only update the LCD occasionally
@@ -247,7 +348,8 @@ void lcd_update()
     return;
   lcd_millis = millis();
 
-  oled_update();
+//  u8x8_draw_fuel();
+  u8x8_draw_compass ();
   /*
     if (battery_bus_sw == 0 || avionics_sw == 0)
     {
@@ -261,6 +363,7 @@ void lcd_update()
     else  
     {
     */
+    
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print(altitude);
@@ -280,6 +383,7 @@ void lcd_update()
       lcd.print(ap_altitude_mode);
       
     //}    
+    
 }
 
 void led_update()

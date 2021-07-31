@@ -70,6 +70,12 @@
             <format>%s</format>
         </chunk>
         <chunk>
+            <name>Autopilot heading bug</name>
+            <node>/autopilot/settings/heading-bug-deg</node>
+            <type>integer</type>
+            <format>%i</format>
+        </chunk>
+        <chunk>
             <name>Fuel quantity left</name>
             <node>/consumables/fuel/tank/level-lbs</node>
             <type>double</type>
@@ -78,6 +84,12 @@
         <chunk>
             <name>Fuel quantity right</name>
             <node>/consumables/fuel/tank[1]/level-lbs</node>
+            <type>double</type>
+            <format>%f</format>
+        </chunk>
+        <chunk>
+            <name>Compass heading</name>
+            <node>/orientation/heading-magnetic-deg</node>
             <type>double</type>
             <format>%f</format>
         </chunk>
